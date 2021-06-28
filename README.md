@@ -1,1 +1,1 @@
-# OsirisGate #ByPureza$Neves
+# OsirisGate
