@@ -1,3 +1,2 @@
 # OsirisGate
-Aline Neves
-João Vitor Pureza
+Aline Neves & João Vitor Pureza
