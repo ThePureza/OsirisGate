@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/")
 public class IndexResource {
 
+
+
     @GetMapping()
     public String gget(){return "Osiris' Gate API";}
 }

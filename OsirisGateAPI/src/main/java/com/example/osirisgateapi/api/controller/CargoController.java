@@ -1,19 +1,18 @@
 package com.example.osirisgateapi.api.controller;
 
 import com.example.osirisgateapi.api.dto.CargoDTO;
+import com.example.osirisgateapi.api.exception.RegraNegocioException;
 import com.example.osirisgateapi.model.entity.Cargo;
 import com.example.osirisgateapi.service.CargoService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/cargos")
@@ -35,5 +34,50 @@ public class CargoController {
             return new ResponseEntity("Cargo não encontrado", HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(cargo.map(CargoDTO::create));
+    }
+
+    @PostMapping()
+    public ResponseEntity post(CargoDTO dto){
+        try{
+            Cargo cargo = converter(dto);
+            cargo = service.salvar(cargo);
+            return new ResponseEntity(cargo, HttpStatus.CREATED);
+        } catch (RegraNegocioException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity atualizar(@PathVariable("id") Long id, CargoDTO dto){
+        if(!service.getCargoById(id).isPresent()){
+            return new ResponseEntity("Cargo não encontrado", HttpStatus.NOT_FOUND);
+        }
+        try {
+            Cargo cargo = converter(dto);
+            cargo.setId(id);
+            service.salvar(cargo);
+            return ResponseEntity.ok(cargo);
+        } catch (RegraNegocioException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity excluir(@PathVariable("id") Long id){
+        Optional<Cargo> cargo = service.getCargoById(id);
+        if(!cargo.isPresent()){
+            return new ResponseEntity("Cargo não encontrado", HttpStatus.NOT_FOUND);
+        }
+        try {
+            service.excluir(cargo.get());
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        } catch (RegraNegocioException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    public Cargo converter(CargoDTO dto){
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(dto, Cargo.class);
     }
 }

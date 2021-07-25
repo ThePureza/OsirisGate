@@ -27,11 +27,13 @@ public class UsuarioDTO {
     private String cidade;
     private String uf;
     private Long idCargo;
+    private String nomeCargo;
 
     public static UsuarioDTO create(Usuario usuario){
         ModelMapper modelMapper = new ModelMapper();
         UsuarioDTO dto = modelMapper.map(usuario, UsuarioDTO.class);
         assert dto.getIdCargo().equals(usuario.getCargo().getId());
+        assert dto.getNomeCargo().equals(usuario.getCargo().getNomeCargo());
         return modelMapper.map(usuario, UsuarioDTO.class);
     }
 }

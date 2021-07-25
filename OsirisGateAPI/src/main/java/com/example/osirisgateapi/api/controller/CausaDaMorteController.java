@@ -1,15 +1,14 @@
 package com.example.osirisgateapi.api.controller;
 
 import com.example.osirisgateapi.api.dto.CausaDaMorteDTO;
+import com.example.osirisgateapi.api.exception.RegraNegocioException;
 import com.example.osirisgateapi.model.entity.CausaDaMorte;
 import com.example.osirisgateapi.service.CausaDaMorteService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,5 +34,50 @@ public class CausaDaMorteController {
             return new ResponseEntity("Causa da morte não encontrada", HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(causaDaMorte.map(CausaDaMorteDTO::create));
+    }
+
+    @PostMapping()
+    public ResponseEntity post(CausaDaMorteDTO dto){
+        try{
+            CausaDaMorte causaDaMorte = converter(dto);
+            causaDaMorte = service.salvar(causaDaMorte);
+            return new ResponseEntity(causaDaMorte, HttpStatus.CREATED);
+        } catch (RegraNegocioException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity atualizar(@PathVariable("id") Long id, CausaDaMorteDTO dto){
+        if(!service.getCausaDaMorteById(id).isPresent()){
+            return new ResponseEntity("Causa da morte não encontrada", HttpStatus.NOT_FOUND);
+        }
+        try {
+            CausaDaMorte causaDaMorte = converter(dto);
+            causaDaMorte.setId(id);
+            service.salvar(causaDaMorte);
+            return ResponseEntity.ok(causaDaMorte);
+        } catch (RegraNegocioException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity excluir(@PathVariable("id") Long id){
+        Optional<CausaDaMorte> causaDaMorte = service.getCausaDaMorteById(id);
+        if(!causaDaMorte.isPresent()){
+            return new ResponseEntity("Causa da morte não encontrada", HttpStatus.NOT_FOUND);
+        }
+        try {
+            service.excluir(causaDaMorte.get());
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        } catch (RegraNegocioException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    public CausaDaMorte converter(CausaDaMorteDTO dto){
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(dto, CausaDaMorte.class);
     }
 }

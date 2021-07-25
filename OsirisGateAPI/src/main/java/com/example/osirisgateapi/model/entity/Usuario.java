@@ -30,6 +30,7 @@ public class Usuario {
     private String bairro;//obrigatório
     private String cidade;//obrigatório
     private String uf;//obrigatório
+
     @ManyToOne
     private Cargo cargo;// chave estrangeira, obrigatório
 }
