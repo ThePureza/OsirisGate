@@ -3,7 +3,9 @@ package com.example.osirisgateapi.api.controller;
 import com.example.osirisgateapi.api.dto.GavetaDTO;
 import com.example.osirisgateapi.api.exception.RegraNegocioException;
 import com.example.osirisgateapi.model.entity.Gaveta;
+import com.example.osirisgateapi.model.entity.Ossuario;
 import com.example.osirisgateapi.service.GavetaService;
+import com.example.osirisgateapi.service.OssuarioService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 public class GavetaController {
 
     private final GavetaService service;
+    private final OssuarioService ossuarioService;
 
     @GetMapping()
     public ResponseEntity get(){
@@ -78,6 +81,15 @@ public class GavetaController {
 
     public Gaveta converter(GavetaDTO dto){
         ModelMapper modelMapper = new ModelMapper();
-        return modelMapper.map(dto, Gaveta.class);
+        Gaveta gaveta = modelMapper.map(dto, Gaveta.class);
+        if (dto.getIdOssuario() != null){
+            Optional<Ossuario> ossuario = ossuarioService.getOssuarioById(dto.getIdOssuario());
+            if(!ossuario.isPresent()){
+                gaveta.setOssuario(null);
+            } else {
+                gaveta.setOssuario(ossuario.get());
+            }
+        }
+        return gaveta;
     }
 }

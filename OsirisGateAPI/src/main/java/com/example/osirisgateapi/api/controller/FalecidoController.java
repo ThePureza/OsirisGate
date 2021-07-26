@@ -68,6 +68,20 @@ public class FalecidoController {
         }
     }
 
+    @DeleteMapping("{id}")
+    public ResponseEntity excluir(@PathVariable("id") Long id){
+        Optional<Falecido> falecido = service.getFalecidoById(id);
+        if(!falecido.isPresent()){
+            return new ResponseEntity("Falecido não encontrado", HttpStatus.NOT_FOUND);
+        }
+        try {
+            service.excluir(falecido.get());
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        } catch (RegraNegocioException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     public Falecido converter(FalecidoDTO dto){
         ModelMapper modelMapper = new ModelMapper();
         Falecido falecido =  modelMapper.map(dto, Falecido.class);

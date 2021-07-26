@@ -3,6 +3,7 @@ package com.example.osirisgateapi.api.controller;
 import com.example.osirisgateapi.api.dto.UsuarioDTO;
 import com.example.osirisgateapi.api.exception.RegraNegocioException;
 import com.example.osirisgateapi.model.entity.Cargo;
+import com.example.osirisgateapi.model.entity.Funeraria;
 import com.example.osirisgateapi.model.entity.Usuario;
 import com.example.osirisgateapi.service.CargoService;
 import com.example.osirisgateapi.service.UsuarioService;
@@ -61,6 +62,20 @@ public class UsuarioController {
             service.salvar(usuario);
             return ResponseEntity.ok(usuario);
         } catch (RegraNegocioException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity excluir(@PathVariable("id") Long id){
+        Optional<Usuario> usuario = service.getUsuarioById(id);
+        if(!usuario.isPresent()){
+            return new ResponseEntity("Usuário não encontrada", HttpStatus.NOT_FOUND);
+        }
+        try {
+            service.excluir(usuario.get());
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        } catch (RegraNegocioException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

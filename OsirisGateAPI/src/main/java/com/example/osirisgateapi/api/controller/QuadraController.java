@@ -3,6 +3,7 @@ package com.example.osirisgateapi.api.controller;
 import com.example.osirisgateapi.api.dto.QuadraDTO;
 import com.example.osirisgateapi.api.exception.RegraNegocioException;
 import com.example.osirisgateapi.model.entity.Cargo;
+import com.example.osirisgateapi.model.entity.Funeraria;
 import com.example.osirisgateapi.model.entity.Quadra;
 import com.example.osirisgateapi.model.entity.Setor;
 import com.example.osirisgateapi.service.QuadraService;
@@ -62,6 +63,20 @@ public class QuadraController {
             service.salvar(quadra);
             return ResponseEntity.ok(quadra);
         } catch (RegraNegocioException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity excluir(@PathVariable("id") Long id){
+        Optional<Quadra> quadra = service.getQuadraById(id);
+        if(!quadra.isPresent()){
+            return new ResponseEntity("Quadra não encontrada", HttpStatus.NOT_FOUND);
+        }
+        try {
+            service.excluir(quadra.get());
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        } catch (RegraNegocioException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

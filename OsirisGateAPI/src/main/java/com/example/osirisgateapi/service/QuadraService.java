@@ -42,7 +42,7 @@ public class QuadraService {
             throw new RegraNegocioException("Nome inválido");
         }
         if (quadra.getSetor() == null || quadra.getSetor().getId() == null || quadra.getSetor().getId() == 0){
-            throw new RegraNegocioException("Cargo inválido");
+            throw new RegraNegocioException("Setor inválido");
         }
     }
 }
