@@ -20,11 +20,4 @@ public class Cargo {
 
     private String nomeCargo;//obrigatório
     private String descricaoCargo;
-
-   // @ManyToMany
-   // @JoinTable(name = "cargo_usuario",
-    //        joinColumns = @JoinColumn(name = "cargo_id"),
-    //        inverseJoinColumns = @JoinColumn(name = "usuario_id"))
-   // private List<Usuario> usuarios;
-
 }

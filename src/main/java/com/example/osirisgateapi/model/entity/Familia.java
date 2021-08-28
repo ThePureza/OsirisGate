@@ -32,4 +32,6 @@ public class Familia {
     private String uf;//obrigatório
     private String parentesco;//obrigatório
 
+   @ManyToOne
+    private Falecido falecido;
 }

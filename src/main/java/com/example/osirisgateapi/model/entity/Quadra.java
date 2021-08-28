@@ -17,7 +17,8 @@ public class Quadra {
     private Long id;
 
     private String numeroQuadra;// obrigatório
+
     @ManyToOne
-    private Setor setor;// chave estrangeira, obrigatório
+    private Setor setor;// chave estrangeira
 
 }

@@ -44,7 +44,7 @@ public class FalecidoDTO {
     public static FalecidoDTO create(Falecido falecido){
         ModelMapper modelMapper = new ModelMapper();
         FalecidoDTO dto = modelMapper.map(falecido, FalecidoDTO.class);
-        assert dto.getIdFamilia().equals(falecido.getFamilia().getId());
+       // assert dto.getIdFamilia().equals(falecido.getFamilia().getId());
         assert dto.getIdFuneraria().equals(falecido.getFuneraria().getId());
         assert dto.getIdCausaDaMorte().equals(falecido.getCausaDaMorte().getId());
         assert dto.getIdServico().equals(falecido.getServico().getId());

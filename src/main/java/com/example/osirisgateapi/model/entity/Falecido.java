@@ -1,10 +1,12 @@
 package com.example.osirisgateapi.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Data
@@ -15,9 +17,12 @@ public class Falecido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    //@ManyToOne
+   // private Familia familia; // chave estrangeira, obrigatório
 
-    @ManyToOne
-    private Familia familia; // chave estrangeira, obrigatório
+    @JsonIgnore
+    @OneToMany (mappedBy = "falecidos")
+    private List<Familia> familias;
     @ManyToOne
     private Funeraria funeraria;// chave estrangeira, obrigatório
     private String nomeFalecido;//obrigatório

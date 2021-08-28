@@ -2,6 +2,8 @@ package com.example.osirisgateapi.service;
 
 import com.example.osirisgateapi.api.exception.RegraNegocioException;
 import com.example.osirisgateapi.model.entity.Falecido;
+import com.example.osirisgateapi.model.entity.Familia;
+import com.example.osirisgateapi.model.entity.Funeraria;
 import com.example.osirisgateapi.model.repository.FalecidoRepository;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
@@ -14,8 +16,11 @@ public class FalecidoService {
 
     private FalecidoRepository repository;
 
-    public FalecidoService(FalecidoRepository repository){
+    private final FamiliaService familiaService;
+
+    public FalecidoService(FalecidoRepository repository, FamiliaService familiaService) {
         this.repository = repository;
+        this.familiaService = familiaService;
     }
 
     public List<Falecido> getFalecidos(){
@@ -34,6 +39,10 @@ public class FalecidoService {
 
     @Transactional public void excluir (Falecido falecido){
         Objects.requireNonNull(falecido.getId());
+        for (Familia familia : falecido.getFamilias()) {
+            familia.setFalecido(null);
+            familiaService.salvar(familia);
+        }
         repository.delete(falecido);
     }
 
@@ -41,9 +50,9 @@ public class FalecidoService {
         if (falecido.getNomeFalecido() == null || falecido.getNomeFalecido().trim().equals("")){
             throw new RegraNegocioException("Nome inválido");
         }
-        if (falecido.getFamilia() == null || falecido.getFamilia().getId() == null || falecido.getFamilia().getId() == 0){
-            throw new RegraNegocioException("Família inválida");
-        }
+       // if (falecido.getFamilia() == null || falecido.getFamilia().getId() == null || falecido.getFamilia().getId() == 0){
+         //   throw new RegraNegocioException("Família inválida");
+       // }
         if (falecido.getFuneraria() == null || falecido.getFuneraria().getId() == null || falecido.getFuneraria().getId() == 0){
             throw new RegraNegocioException("Funerária inválida");
         }
