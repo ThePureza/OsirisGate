@@ -42,7 +42,7 @@ public class Falecido {
     private String bairro;//obrigatório
     private String cidade;//obrigatório
     private String uf;//obrigatório
-    @ManyToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Servico servico;// chave estrangeira, obrigatório
     private String prestadorServico;//obrigatório
     @ManyToOne

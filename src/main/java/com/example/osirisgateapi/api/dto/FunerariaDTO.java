@@ -28,6 +28,7 @@ public class FunerariaDTO {
 
     public static FunerariaDTO create(Funeraria funeraria){
         ModelMapper modelMapper = new ModelMapper();
+        FunerariaDTO dto = modelMapper.map(funeraria, FunerariaDTO.class);
         return modelMapper.map(funeraria, FunerariaDTO.class);
     }
 }
