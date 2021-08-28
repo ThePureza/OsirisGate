@@ -1,6 +1,7 @@
 package com.example.osirisgateapi.service;
 
 import com.example.osirisgateapi.api.exception.RegraNegocioException;
+import com.example.osirisgateapi.model.entity.Cargo;
 import com.example.osirisgateapi.model.entity.Usuario;
 import com.example.osirisgateapi.model.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,9 @@ public class UsuarioService {
         return repository.findById(id);
     }
 
+    public List<Usuario> getUsuariosByCargo(Optional<Cargo> cargo) {
+        return repository.findByCargo(cargo);
+    }
     @Transactional
     public Usuario salvar(Usuario usuario){
         validar(usuario);
@@ -41,7 +45,7 @@ public class UsuarioService {
         if (usuario.getNomeUsuario() == null || usuario.getNomeUsuario().trim().equals("")){
             throw new RegraNegocioException("Nome inválido");
         }
-        if (usuario.getCargo() == null || usuario.getCargo().getId() == null || usuario.getCargo().getId() == 0){
+        if (usuario.getCargo() == null || usuario.getCargo().getId() == null || usuario.getCargo().getId() == 0) {
             throw new RegraNegocioException("Cargo inválido");
         }
     }

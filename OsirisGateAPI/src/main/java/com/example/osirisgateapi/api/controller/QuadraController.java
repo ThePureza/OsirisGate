@@ -8,6 +8,7 @@ import com.example.osirisgateapi.model.entity.Quadra;
 import com.example.osirisgateapi.model.entity.Setor;
 import com.example.osirisgateapi.service.QuadraService;
 import com.example.osirisgateapi.service.SetorService;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -21,19 +22,30 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/quadras")
 @RequiredArgsConstructor
+@Api("API de Quadras")
 public class QuadraController {
 
     private final QuadraService service;
     private final SetorService setorService;
 
     @GetMapping()
+    @ApiOperation("Obter detalhes de todas as quadras")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Quadra encontrada"),
+            @ApiResponse(code = 404, message = "Quadra não encontrada")
+    })
     public ResponseEntity get(){
         List<Quadra> quadras = service.getQuadras();
         return ResponseEntity.ok(quadras.stream().map(QuadraDTO::create).collect(Collectors.toList()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity get(@PathVariable("id") Long id){
+    @ApiOperation("Obter detalhes de uma quadra específica")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Quadra encontrada"),
+            @ApiResponse(code = 404, message = "Quadra não encontrada")
+    })
+    public ResponseEntity get(@PathVariable("id") @ApiParam("Id da quadra") Long id){
         Optional<Quadra> quadra = service.getQuadraById(id);
         if(!quadra.isPresent()){
             return new ResponseEntity("Quadra não encontrada", HttpStatus.NOT_FOUND);
@@ -42,6 +54,11 @@ public class QuadraController {
     }
 
     @PostMapping()
+    @ApiOperation("Criar uma quadra")
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "Quadra salva com sucesso"),
+            @ApiResponse(code = 400, message = "Erro ao salvar a quadra")
+    })
     public ResponseEntity post(QuadraDTO dto){
         try{
             Quadra quadra = converter(dto);
@@ -53,7 +70,12 @@ public class QuadraController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity atualizar(@PathVariable("id") Long id, QuadraDTO dto){
+    @ApiOperation("Alterar uma quadra")
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "Quadra salva com sucesso"),
+            @ApiResponse(code = 400, message = "Erro ao alterar a quadra")
+    })
+    public ResponseEntity atualizar(@PathVariable("id") @ApiParam("Id da quadra") Long id, QuadraDTO dto){
         if(!service.getQuadraById(id).isPresent()){
             return new ResponseEntity("Quadra não encontrada", HttpStatus.NOT_FOUND);
         }
@@ -68,7 +90,11 @@ public class QuadraController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity excluir(@PathVariable("id") Long id){
+    @ApiOperation("Excluir uma quadra")
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "Quadra excluída com sucesso")
+    })
+    public ResponseEntity excluir(@PathVariable("id") @ApiParam("Id da quadra") Long id){
         Optional<Quadra> quadra = service.getQuadraById(id);
         if(!quadra.isPresent()){
             return new ResponseEntity("Quadra não encontrada", HttpStatus.NOT_FOUND);

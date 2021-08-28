@@ -1,9 +1,9 @@
 package com.example.osirisgateapi.service;
-
 import com.example.osirisgateapi.api.exception.SenhaInvalidaException;
-import com.example.osirisgateapi.model.entity.User;
-import com.example.osirisgateapi.model.repository.UserRepository;
+import com.example.osirisgateapi.model.entity.Credential;
+import com.example.osirisgateapi.model.repository.CredentialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,25 +12,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class UserService  implements UserDetailsService {
-
+public class CredentialService implements UserDetailsService{
     @Autowired
     private PasswordEncoder encoder;
 
     @Autowired
-    private UserRepository repository;
+    private CredentialRepository repository;
 
     @Transactional
-    public User salvar(User user){
-        return repository.save(user);
+    public Credential salvar(Credential credential){
+        return repository.save(credential);
     }
 
-    public UserDetails autenticar(User user){
-        UserDetails usuario = loadUserByUsername(user.getUsername());
-        boolean senhasBatem = encoder.matches(user.getPassword(), user.getPassword());
+    public UserDetails autenticar(Credential credential){
+        UserDetails user = loadUserByUsername(credential.getLogin());
+        boolean senhasBatem = encoder.matches(credential.getSenha(), user.getPassword());
 
         if (senhasBatem){
-            return usuario;
+            return user;
         }
         throw new SenhaInvalidaException();
     }
@@ -38,17 +37,17 @@ public class UserService  implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        User user = repository.findByLogin(username)
+        Credential credential = repository.findByLogin(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
 
-        String[] roles = user.isAdmin()
+        String[] roles = credential.isAdmin()
                 ? new String[]{"ADMIN", "USER"}
                 : new String[]{"USER"};
 
         return User
                 .builder()
-                .username(user.getUsername())
-                .password(user.getPassword())
+                .username(credential.getLogin())
+                .password(credential.getSenha())
                 .roles(roles)
                 .build();
     }

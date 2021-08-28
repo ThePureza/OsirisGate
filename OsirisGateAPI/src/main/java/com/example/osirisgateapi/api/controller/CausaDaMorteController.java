@@ -4,6 +4,7 @@ import com.example.osirisgateapi.api.dto.CausaDaMorteDTO;
 import com.example.osirisgateapi.api.exception.RegraNegocioException;
 import com.example.osirisgateapi.model.entity.CausaDaMorte;
 import com.example.osirisgateapi.service.CausaDaMorteService;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -17,18 +18,29 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/causaDaMortes")
 @RequiredArgsConstructor
+@Api("API de Causas da Morte")
 public class CausaDaMorteController {
 
     private final CausaDaMorteService service;
 
     @GetMapping()
+    @ApiOperation("Obter detalhes de todas as causas da morte")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Causa da morte encontrada"),
+            @ApiResponse(code = 404, message = "Causa da morte não encontrada")
+    })
     public ResponseEntity get(){
         List<CausaDaMorte> causaDaMortes = service.getCausaDaMortes();
         return ResponseEntity.ok(causaDaMortes.stream().map(CausaDaMorteDTO::create).collect(Collectors.toList()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity get(@PathVariable("id") Long id){
+    @ApiOperation("Obter detalhes de uma causa da morte específica")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Causa da morte encontrada"),
+            @ApiResponse(code = 404, message = "Causa da morte não encontrada")
+    })
+    public ResponseEntity get(@PathVariable("id") @ApiParam("Id da causa da morte") Long id){
         Optional<CausaDaMorte> causaDaMorte = service.getCausaDaMorteById(id);
         if(!causaDaMorte.isPresent()){
             return new ResponseEntity("Causa da morte não encontrada", HttpStatus.NOT_FOUND);
@@ -37,6 +49,11 @@ public class CausaDaMorteController {
     }
 
     @PostMapping()
+    @ApiOperation("Criar uma causa da morte")
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "Causa da morte salva com sucesso"),
+            @ApiResponse(code = 400, message = "Erro ao salvar a causa da morte")
+    })
     public ResponseEntity post(CausaDaMorteDTO dto){
         try{
             CausaDaMorte causaDaMorte = converter(dto);
@@ -48,7 +65,12 @@ public class CausaDaMorteController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity atualizar(@PathVariable("id") Long id, CausaDaMorteDTO dto){
+    @ApiOperation("Criar uma causa da morte")
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "Causa da morte salva com sucesso"),
+            @ApiResponse(code = 400, message = "Erro ao alterar a causa da morte")
+    })
+    public ResponseEntity atualizar(@PathVariable("id") @ApiParam("Id da causa da morte")Long id, CausaDaMorteDTO dto){
         if(!service.getCausaDaMorteById(id).isPresent()){
             return new ResponseEntity("Causa da morte não encontrada", HttpStatus.NOT_FOUND);
         }
@@ -63,7 +85,11 @@ public class CausaDaMorteController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity excluir(@PathVariable("id") Long id){
+    @ApiOperation("Excluir uma causa da morte")
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "Causa da morte excluída com sucesso")
+    })
+    public ResponseEntity excluir(@PathVariable("id") @ApiParam("Id da causa da morte") Long id){
         Optional<CausaDaMorte> causaDaMorte = service.getCausaDaMorteById(id);
         if(!causaDaMorte.isPresent()){
             return new ResponseEntity("Causa da morte não encontrada", HttpStatus.NOT_FOUND);

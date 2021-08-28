@@ -3,9 +3,11 @@ package com.example.osirisgateapi.api.controller;
 import com.example.osirisgateapi.api.dto.CredenciaisDTO;
 import com.example.osirisgateapi.api.dto.TokenDTO;
 import com.example.osirisgateapi.api.exception.SenhaInvalidaException;
-import com.example.osirisgateapi.model.entity.User;
+import com.example.osirisgateapi.model.entity.Credential;
 import com.example.osirisgateapi.security.JwtService;
-import com.example.osirisgateapi.service.UserService;
+import com.example.osirisgateapi.service.CredentialService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,33 +17,37 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/credentials")
 @RequiredArgsConstructor
-public class UserController {
+@Api("API de Credentials")
+public class CredentialController {
 
-    private final UserService userService;
+    private final CredentialService credentialService;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
     @PostMapping
+    @ApiOperation("Criar um usuário sistema")
     @ResponseStatus(HttpStatus.CREATED)
-    public User salvar(@RequestBody User user){
-        String senhaCriptografada = passwordEncoder.encode(user.getSenha());
-        user.setSenha(senhaCriptografada);
-        return userService.salvar(user);
+    public Credential salvar(@RequestBody Credential credential ){
+        String senhaCriptografada = passwordEncoder.encode(credential.getSenha());
+        credential.setSenha(senhaCriptografada);
+        return credentialService.salvar(credential);
     }
 
     @PostMapping("/auth")
+    @ApiOperation("Token da senha do usuário sistema")
     public TokenDTO autenticar(@RequestBody CredenciaisDTO credenciais){
         try{
-            User user = User.builder()
+            Credential credential = Credential.builder()
                     .login(credenciais.getLogin())
                     .senha(credenciais.getSenha()).build();
-            UserDetails userAutenticado = userService.autenticar(user);
-            String token = jwtService.gerarToken(user);
-            return new TokenDTO(user.getLogin(), token);
+            UserDetails credentialAutenticado = credentialService.autenticar(credential);
+            String token = jwtService.gerarToken(credential);
+            return new TokenDTO(credential.getLogin(), token);
         } catch (UsernameNotFoundException | SenhaInvalidaException e ){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
         }
     }
 }
+

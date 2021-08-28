@@ -1,6 +1,7 @@
 package com.example.osirisgateapi.security;
 
-import com.example.osirisgateapi.service.UserService;
+import com.example.osirisgateapi.model.entity.Credential;
+import com.example.osirisgateapi.service.CredentialService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,11 +17,11 @@ import java.io.IOException;
 public class JwtAuthFilter  extends OncePerRequestFilter {
 
     private JwtService jwtService;
-    private UserService userService;
+    private CredentialService credentialService;
 
-    public JwtAuthFilter(JwtService jwtService, UserService userService) {
+    public JwtAuthFilter( JwtService jwtService, CredentialService credentialService ) {
         this.jwtService = jwtService;
-        this.userService = userService;
+        this.credentialService = credentialService;
     }
 
     @Override
@@ -36,11 +37,11 @@ public class JwtAuthFilter  extends OncePerRequestFilter {
             boolean isValid = jwtService.tokenValido(token);
 
             if(isValid){
-                String loginUser = jwtService.obterLoginUser(token);
-                UserDetails usuario = userService.loadUserByUsername(loginUser);
+                String loginCredential = jwtService.obterLoginCredential(token);
+                UserDetails credential = credentialService.loadUserByUsername(loginCredential);
                 UsernamePasswordAuthenticationToken user = new
-                        UsernamePasswordAuthenticationToken(usuario,null,
-                        usuario.getAuthorities());
+                        UsernamePasswordAuthenticationToken(credential,null,
+                        credential.getAuthorities());
                 user.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
                 SecurityContextHolder.getContext().setAuthentication(user);
             }

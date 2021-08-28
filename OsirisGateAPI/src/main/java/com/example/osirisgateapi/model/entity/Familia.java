@@ -4,10 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Data
@@ -29,7 +26,7 @@ public class Familia {
     private String cep;//obrigatório
     private String logradouro;//obrigatório
     private String numero;//obrigatório
-    private String complemento;//obrigatório
+    private String complemento;
     private String bairro;//obrigatório
     private String cidade;//obrigatório
     private String uf;//obrigatório

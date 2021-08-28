@@ -6,6 +6,7 @@ import com.example.osirisgateapi.model.entity.*;
 import com.example.osirisgateapi.service.LoteService;
 import com.example.osirisgateapi.service.QuadraService;
 import com.example.osirisgateapi.service.SetorService;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/lotes")
 @RequiredArgsConstructor
+@Api("API de Lotes")
 public class LoteController {
 
     private final LoteService service;
@@ -26,13 +28,23 @@ public class LoteController {
     private final QuadraService quadraService;
 
     @GetMapping()
+    @ApiOperation("Obter detalhes de todos os lotes")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Lote encontrado"),
+            @ApiResponse(code = 404, message = "Lote não encontrado")
+    })
     public ResponseEntity get(){
         List<Lote> lotes = service.getLotes();
         return ResponseEntity.ok(lotes.stream().map(LoteDTO::create).collect(Collectors.toList()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity get(@PathVariable("id") Long id){
+    @ApiOperation("Obter detalhes de um lote específico")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Lote encontrado"),
+            @ApiResponse(code = 404, message = "Lote não encontrado")
+    })
+    public ResponseEntity get(@PathVariable("id") @ApiParam("Id do lote") Long id){
         Optional<Lote> lote = service.getLoteById(id);
         if(!lote.isPresent()){
             return new ResponseEntity("Lote não encontrado", HttpStatus.NOT_FOUND);
@@ -41,6 +53,11 @@ public class LoteController {
     }
 
     @PostMapping()
+    @ApiOperation("Criar um lote")
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "Lote salvo com sucesso"),
+            @ApiResponse(code = 400, message = "Erro ao salvar o lote")
+    })
     public ResponseEntity post(LoteDTO dto){
         try{
             Lote lote = converter(dto);
@@ -52,7 +69,12 @@ public class LoteController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity atualizar(@PathVariable("id") Long id, LoteDTO dto){
+    @ApiOperation("Alterar um lote")
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "Lote salvo com sucesso"),
+            @ApiResponse(code = 400, message = "Erro ao alterar o lote")
+    })
+    public ResponseEntity atualizar(@PathVariable("id") @ApiParam("Id do lote") Long id, LoteDTO dto){
         if(!service.getLoteById(id).isPresent()){
             return new ResponseEntity("Lote não encontrado", HttpStatus.NOT_FOUND);
         }
@@ -67,7 +89,11 @@ public class LoteController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity excluir(@PathVariable("id") Long id){
+    @ApiOperation("Excluir um lote")
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "Lote excluído com sucesso")
+    })
+    public ResponseEntity excluir(@PathVariable("id") @ApiParam("Id do lote") Long id){
         Optional<Lote> lote = service.getLoteById(id);
         if(!lote.isPresent()){
             return new ResponseEntity("Lote não encontrado", HttpStatus.NOT_FOUND);

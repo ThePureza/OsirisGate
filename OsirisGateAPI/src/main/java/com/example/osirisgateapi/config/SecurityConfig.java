@@ -2,12 +2,13 @@ package com.example.osirisgateapi.api.config;
 
 import com.example.osirisgateapi.security.JwtAuthFilter;
 import com.example.osirisgateapi.security.JwtService;
-import com.example.osirisgateapi.service.UserService;
+import com.example.osirisgateapi.service.CredentialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -20,14 +21,14 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private UserService userService;
+    private CredentialService credentialService;
 
     @Autowired
     private JwtService jwtService;
 
     @Bean
     public OncePerRequestFilter jwtFilter(){
-        return new JwtAuthFilter(jwtService, userService);
+        return new JwtAuthFilter(jwtService, credentialService);
     }
 
     @Bean
@@ -38,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
-                .userDetailsService(userService)
+                .userDetailsService(credentialService)
                 .passwordEncoder(passwordEncoder());
     }
 
@@ -49,7 +50,31 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/api/v1/cargos/**")
                 .hasAnyRole("USER", "ADMIN")
-                .antMatchers(HttpMethod.POST, "/api/v1/users/**")
+                .antMatchers("/api/v1/causaDaMortes/**")
+                .hasAnyRole( "ADMIN")
+                .antMatchers("/api/v1/falecidos/**")
+                .hasAnyRole("USER", "ADMIN")
+                .antMatchers("/api/v1/familias/**")
+                .hasAnyRole("USER", "ADMIN")
+                .antMatchers("/api/v1/funerarias/**")
+                .hasAnyRole("USER", "ADMIN")
+                .antMatchers("/api/v1/gavetas/**")
+                .hasAnyRole("ADMIN")
+                .antMatchers("/api/v1/lotes/**")
+                .hasAnyRole("USER", "ADMIN")
+                .antMatchers("/api/v1/ossuarios/**")
+                .hasAnyRole("USER", "ADMIN")
+                .antMatchers("/api/v1/programacoes/**")
+                .hasAnyRole("USER", "ADMIN")
+                .antMatchers("/api/v1/quadras/**")
+                .hasAnyRole("USER", "ADMIN")
+                .antMatchers("/api/v1/servicos/**")
+                .hasAnyRole("USER", "ADMIN")
+                .antMatchers("/api/v1/setores/**")
+                .hasAnyRole("USER", "ADMIN")
+                .antMatchers("/api/v1/usuarios/**")
+                .hasAnyRole("ADMIN")
+                .antMatchers(HttpMethod.POST, "/api/v1/credentials/**")
                 .permitAll()
                 .anyRequest().authenticated()
                 .and()
@@ -58,5 +83,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
         ;
+    }
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers(
+                "/v2/api-docs",
+                "/configuration/ui",
+                "/swagger-resources/**",
+                "/configuration/security",
+                "/swagger-ui.html",
+                "/webjars/**");
     }
 }

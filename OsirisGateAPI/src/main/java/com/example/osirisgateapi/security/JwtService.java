@@ -1,5 +1,5 @@
 package com.example.osirisgateapi.security;
-import com.example.osirisgateapi.model.entity.User;
+import com.example.osirisgateapi.model.entity.Credential;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -24,7 +24,7 @@ public class JwtService {
     @Value("${security.jwt.chave-assinatura}")
     private String chaveAssinatura;
 
-    public String gerarToken(User user){
+    public String gerarToken(Credential credential){
         long expString = Long.valueOf(expiracao);
         LocalDateTime dataHoraExpiracao = LocalDateTime.now().plusMinutes(expString);
         Instant instant = dataHoraExpiracao.atZone(ZoneId.systemDefault()).toInstant();
@@ -32,7 +32,7 @@ public class JwtService {
 
         return Jwts
                 .builder()
-                .setSubject(user.getLogin())
+                .setSubject(credential.getLogin())
                 .setExpiration(data)
                 .signWith( SignatureAlgorithm.HS512, chaveAssinatura )
                 .compact();
@@ -59,7 +59,7 @@ public class JwtService {
         }
     }
 
-    public String obterLoginUser(String token) throws ExpiredJwtException{
+    public String obterLoginCredential(String token) throws ExpiredJwtException{
         return (String) obterClaims(token).getSubject();
     }
 }

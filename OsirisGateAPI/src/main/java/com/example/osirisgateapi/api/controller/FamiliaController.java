@@ -4,6 +4,7 @@ import com.example.osirisgateapi.api.dto.FamiliaDTO;
 import com.example.osirisgateapi.api.exception.RegraNegocioException;
 import com.example.osirisgateapi.model.entity.Familia;
 import com.example.osirisgateapi.service.FamiliaService;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -17,18 +18,29 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/familias")
 @RequiredArgsConstructor
+@Api("API de Famílias")
 public class FamiliaController {
 
     private final FamiliaService service;
 
     @GetMapping()
+    @ApiOperation("Obter detalhes de todas as famílias")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Família encontrada"),
+            @ApiResponse(code = 404, message = "Família não encontrada")
+    })
     public ResponseEntity get(){
         List<Familia> familias = service.getFamilias();
         return ResponseEntity.ok(familias.stream().map(FamiliaDTO::create).collect(Collectors.toList()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity get(@PathVariable("id") Long id){
+    @ApiOperation("Obter detalhes de uma família específica")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Família encontrada"),
+            @ApiResponse(code = 404, message = "Família não encontrada")
+    })
+    public ResponseEntity get(@PathVariable("id") @ApiParam("Id da família") Long id){
         Optional<Familia> familia = service.getFamiliaById(id);
         if(!familia.isPresent()){
             return new ResponseEntity("Família não encontrada", HttpStatus.NOT_FOUND);
@@ -37,6 +49,11 @@ public class FamiliaController {
     }
 
     @PostMapping()
+    @ApiOperation("Criar uma família")
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "Família salva com sucesso"),
+            @ApiResponse(code = 400, message = "Erro ao salvar a família")
+    })
     public ResponseEntity post(FamiliaDTO dto){
         try{
             Familia familia = converter(dto);
@@ -48,7 +65,12 @@ public class FamiliaController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity atualizar(@PathVariable("id") Long id, FamiliaDTO dto){
+    @ApiOperation("Alterar uma família")
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "Família salva com sucesso"),
+            @ApiResponse(code = 400, message = "Erro ao alterar a família")
+    })
+    public ResponseEntity atualizar(@PathVariable("id") @ApiParam("Id do cargo") Long id, FamiliaDTO dto){
         if(!service.getFamiliaById(id).isPresent()){
             return new ResponseEntity("Família não encontrada", HttpStatus.NOT_FOUND);
         }
@@ -63,7 +85,11 @@ public class FamiliaController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity excluir(@PathVariable("id") Long id){
+    @ApiOperation("Excluir uma família")
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "Família excluída com sucesso")
+    })
+    public ResponseEntity excluir(@PathVariable("id") @ApiParam("Id da família") Long id){
         Optional<Familia> familia = service.getFamiliaById(id);
         if(!familia.isPresent()){
             return new ResponseEntity("Família não encontrada", HttpStatus.NOT_FOUND);

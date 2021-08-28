@@ -4,6 +4,7 @@ import com.example.osirisgateapi.api.dto.FalecidoDTO;
 import com.example.osirisgateapi.api.exception.RegraNegocioException;
 import com.example.osirisgateapi.model.entity.*;
 import com.example.osirisgateapi.service.*;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/falecidos")
 @RequiredArgsConstructor
+@Api("API de Falecidos")
 public class FalecidoController {
 
     private final FalecidoService service;
@@ -28,13 +30,23 @@ public class FalecidoController {
     private final QuadraService quadraService;
 
     @GetMapping()
+    @ApiOperation("Obter detalhes de todos os falecidos")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Falecido encontrado"),
+            @ApiResponse(code = 404, message = "Falecido não encontrado")
+    })
     public ResponseEntity get(){
         List<Falecido> falecidos = service.getFalecidos();
         return ResponseEntity.ok(falecidos.stream().map(FalecidoDTO::create).collect(Collectors.toList()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity get(@PathVariable("id") Long id){
+    @ApiOperation("Obter detalhes de um falecido específico")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Falecido encontrado"),
+            @ApiResponse(code = 404, message = "Falecido não encontrado")
+    })
+    public ResponseEntity get(@PathVariable("id") @ApiParam("Id do falecido") Long id){
         Optional<Falecido> falecido = service.getFalecidoById(id);
         if(!falecido.isPresent()){
             return new ResponseEntity("Falecido não encontrado", HttpStatus.NOT_FOUND);
@@ -43,6 +55,11 @@ public class FalecidoController {
     }
 
     @PostMapping()
+    @ApiOperation("Criar um falecido")
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "Falecido salvo com sucesso"),
+            @ApiResponse(code = 400, message = "Erro ao salvar o falecido")
+    })
     public ResponseEntity post(FalecidoDTO dto){
         try{
             Falecido falecido = converter(dto);
@@ -54,7 +71,12 @@ public class FalecidoController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity atualizar(@PathVariable("id") Long id, FalecidoDTO dto){
+    @ApiOperation("Alterar um falecido")
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "Falecido salvo com sucesso"),
+            @ApiResponse(code = 400, message = "Erro ao alterar o falecido")
+    })
+    public ResponseEntity atualizar(@PathVariable("id") @ApiParam("Id do falecido") Long id, FalecidoDTO dto){
         if(!service.getFalecidoById(id).isPresent()){
             return new ResponseEntity("Falecido não encontrado", HttpStatus.NOT_FOUND);
         }
@@ -69,7 +91,11 @@ public class FalecidoController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity excluir(@PathVariable("id") Long id){
+    @ApiOperation("Excluir um falecido")
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "Falecido excluído com sucesso")
+    })
+    public ResponseEntity excluir(@PathVariable("id") @ApiParam("Id do falecido") Long id){
         Optional<Falecido> falecido = service.getFalecidoById(id);
         if(!falecido.isPresent()){
             return new ResponseEntity("Falecido não encontrado", HttpStatus.NOT_FOUND);
