@@ -24,10 +24,10 @@ public class ServicoController {
     private final ServicoService service;
 
     @GetMapping()
-    @ApiOperation("Obter detalhes de todos os setores")
+    @ApiOperation("Obter detalhes de todos os serviços")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Setor encontrado"),
-            @ApiResponse(code = 404, message = "Setor não encontrado")
+            @ApiResponse(code = 200, message = "Serviço encontrado"),
+            @ApiResponse(code = 404, message = "Serviço não encontrado")
     })
     public ResponseEntity get(){
         List<Servico> servicos = service.getServicos();
@@ -35,12 +35,12 @@ public class ServicoController {
     }
 
     @GetMapping("/{id}")
-    @ApiOperation("Obter detalhes de um setor específico")
+    @ApiOperation("Obter detalhes de um serviço específico")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Setor encontrado"),
-            @ApiResponse(code = 404, message = "Setor não encontrado")
+            @ApiResponse(code = 200, message = "Serviço encontrado"),
+            @ApiResponse(code = 404, message = "Serviço não encontrado")
     })
-    public ResponseEntity get(@PathVariable("id") @ApiParam("Id do setor") Long id){
+    public ResponseEntity get(@PathVariable("id") @ApiParam("Id do serviço") Long id){
         Optional<Servico> servico = service.getServicoById(id);
         if(!servico.isPresent()){
             return new ResponseEntity("Serviço não encontrado", HttpStatus.NOT_FOUND);
@@ -49,10 +49,10 @@ public class ServicoController {
     }
 
     @PostMapping()
-    @ApiOperation("Criar um setor")
+    @ApiOperation("Criar um serviço")
     @ApiResponses({
-            @ApiResponse(code = 201, message = "Setor salvo com sucesso"),
-            @ApiResponse(code = 400, message = "Erro ao salvar o setor")
+            @ApiResponse(code = 201, message = "Serviço salvo com sucesso"),
+            @ApiResponse(code = 400, message = "Erro ao salvar o serviço")
     })
     public ResponseEntity post(ServicoDTO dto){
         try{
@@ -65,12 +65,12 @@ public class ServicoController {
     }
 
     @PutMapping("{id}")
-    @ApiOperation("Alterar um setor")
+    @ApiOperation("Alterar um serviço")
     @ApiResponses({
-            @ApiResponse(code = 201, message = "Setor salvo com sucesso"),
-            @ApiResponse(code = 400, message = "Erro ao alterar o setor")
+            @ApiResponse(code = 201, message = "Serviço salvo com sucesso"),
+            @ApiResponse(code = 400, message = "Erro ao alterar o serviço")
     })
-    public ResponseEntity atualizar(@PathVariable("id") @ApiParam("Id do setor") Long id, ServicoDTO dto){
+    public ResponseEntity atualizar(@PathVariable("id") @ApiParam("Id do serviço") Long id, ServicoDTO dto){
         if(!service.getServicoById(id).isPresent()){
             return new ResponseEntity("Serviço não encontrado", HttpStatus.NOT_FOUND);
         }
@@ -85,11 +85,11 @@ public class ServicoController {
     }
 
     @DeleteMapping("{id}")
-    @ApiOperation("Excluir um setor")
+    @ApiOperation("Excluir um serviço")
     @ApiResponses({
-            @ApiResponse(code = 204, message = "Setor excluído com sucesso")
+            @ApiResponse(code = 204, message = "Serviço excluído com sucesso")
     })
-    public ResponseEntity excluir(@PathVariable("id") @ApiParam("Id do setor") Long id){
+    public ResponseEntity excluir(@PathVariable("id") @ApiParam("Id do serviço") Long id){
         Optional<Servico> servico = service.getServicoById(id);
         if(!servico.isPresent()){
             return new ResponseEntity("Serviço não encontrado", HttpStatus.NOT_FOUND);
