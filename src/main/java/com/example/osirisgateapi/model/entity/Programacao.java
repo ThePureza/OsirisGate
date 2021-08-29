@@ -17,7 +17,7 @@ public class Programacao {
     private Long id;
 
     private String dataVelorio;// obrigatório
-        private String horaVelorio;// obrigatório
+    private String horaVelorio;// obrigatório
     private String dataSepultamento;// obrigatório
     private String horaSepultamento;// obrigatório
     private String local;// obrigatório

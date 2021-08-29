@@ -15,9 +15,9 @@ public class UsuarioService {
 
     private UsuarioRepository repository;
 
-    //public UsuarioService(UsuarioRepository repository){
-       // this.repository = repository;
-   // }
+    public UsuarioService(UsuarioRepository repository){
+        this.repository = repository;
+    }
 
     public List<Usuario> getUsuarios(){
         return repository.findAll();
