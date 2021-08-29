@@ -16,11 +16,9 @@ public class FalecidoService {
 
     private FalecidoRepository repository;
 
-    private final FamiliaService familiaService;
 
-    public FalecidoService(FalecidoRepository repository, FamiliaService familiaService) {
+     public FalecidoService(FalecidoRepository repository) {
         this.repository = repository;
-        this.familiaService = familiaService;
     }
 
     public List<Falecido> getFalecidos(){
@@ -39,10 +37,6 @@ public class FalecidoService {
 
     @Transactional public void excluir (Falecido falecido){
         Objects.requireNonNull(falecido.getId());
-        for (Familia familia : falecido.getFamilias()) {
-            familia.setFalecido(null);
-            familiaService.salvar(familia);
-        }
         repository.delete(falecido);
     }
 
@@ -50,9 +44,6 @@ public class FalecidoService {
         if (falecido.getNomeFalecido() == null || falecido.getNomeFalecido().trim().equals("")){
             throw new RegraNegocioException("Nome inválido");
         }
-       // if (falecido.getFamilia() == null || falecido.getFamilia().getId() == null || falecido.getFamilia().getId() == 0){
-         //   throw new RegraNegocioException("Família inválida");
-       // }
         if (falecido.getFuneraria() == null || falecido.getFuneraria().getId() == null || falecido.getFuneraria().getId() == 0){
             throw new RegraNegocioException("Funerária inválida");
         }

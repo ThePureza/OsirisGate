@@ -111,14 +111,14 @@ public class FalecidoController {
     public Falecido converter(FalecidoDTO dto){
         ModelMapper modelMapper = new ModelMapper();
         Falecido falecido =  modelMapper.map(dto, Falecido.class);
-       // if (dto.getIdFamilia() != null){
-        //    Optional<Familia> familia = familiaService.getFamiliaById(dto.getIdFamilia());
-          //  if(!familia.isPresent()){
-         //       falecido.setFamilia(null);
-         //   } else {
-          //      falecido.setFamilia(familia.get());
-          //  }
-       // }
+        if (dto.getIdFamilia() != null) {
+            Optional<Familia> familia = familiaService.getFamiliaById(dto.getIdFamilia());
+            if (!familia.isPresent()) {
+                falecido.setFamilia(null);
+            } else {
+                falecido.setFamilia(familia.get());
+            }
+        }
         if (dto.getIdFuneraria() != null){
             Optional<Funeraria> funeraria = funerariaService.getFunerariaById(dto.getIdFuneraria());
             if(!funeraria.isPresent()){

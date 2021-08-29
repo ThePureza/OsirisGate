@@ -1,6 +1,7 @@
 package com.example.osirisgateapi.service;
 
 import com.example.osirisgateapi.api.exception.RegraNegocioException;
+import com.example.osirisgateapi.model.entity.Falecido;
 import com.example.osirisgateapi.model.entity.Familia;
 import com.example.osirisgateapi.model.repository.FamiliaRepository;
 import org.springframework.stereotype.Service;
@@ -13,9 +14,11 @@ import java.util.Optional;
 public class FamiliaService {
 
     private FamiliaRepository repository;
+    private final FalecidoService falecidoService;
 
-    public FamiliaService(FamiliaRepository repository){
-        this.repository = repository;
+    public FamiliaService(FamiliaRepository repository, FalecidoService falecidoService) {
+       this.repository = repository;
+       this.falecidoService = falecidoService;
     }
 
     public List<Familia> getFamilias(){
@@ -34,6 +37,10 @@ public class FamiliaService {
 
     @Transactional public void excluir (Familia familia){
         Objects.requireNonNull(familia.getId());
+        for (Falecido falecido : familia.getFalecidos()) {
+            falecido.setFamilia(null);
+            falecidoService.salvar(falecido);
+        }
         repository.delete(familia);
     }
 

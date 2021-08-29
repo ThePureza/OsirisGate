@@ -1,10 +1,12 @@
 package com.example.osirisgateapi.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Data
@@ -32,6 +34,7 @@ public class Familia {
     private String uf;//obrigatório
     private String parentesco;//obrigatório
 
-   @ManyToOne
-    private Falecido falecido;
+    @JsonIgnore
+    @OneToMany (mappedBy = "familia")
+    private List<Falecido> falecidos;
 }

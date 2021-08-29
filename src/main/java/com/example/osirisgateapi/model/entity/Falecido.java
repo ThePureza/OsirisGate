@@ -17,12 +17,8 @@ public class Falecido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    //@ManyToOne
-   // private Familia familia; // chave estrangeira, obrigatório
-
-    @JsonIgnore
-    @OneToMany (mappedBy = "falecidos")
-    private List<Familia> familias;
+    @ManyToOne
+    private Familia familia; // chave estrangeira
     @ManyToOne
     private Funeraria funeraria;// chave estrangeira, obrigatório
     private String nomeFalecido;//obrigatório

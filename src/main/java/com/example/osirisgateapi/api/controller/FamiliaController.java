@@ -23,6 +23,7 @@ public class FamiliaController {
 
     private final FamiliaService service;
 
+
     @GetMapping()
     @ApiOperation("Obter detalhes de todas as famílias")
     @ApiResponses({
@@ -104,6 +105,6 @@ public class FamiliaController {
 
     public Familia converter(FamiliaDTO dto){
         ModelMapper modelMapper = new ModelMapper();
-        return modelMapper.map(dto, Familia.class);
+    return modelMapper.map(dto, Familia.class);
     }
 }
